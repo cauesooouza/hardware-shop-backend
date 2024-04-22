@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { Repository, ILike, DeleteResult } from "typeorm";
+import { Repository, ILike, DeleteResult, Between, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 import { Products } from "../database/entities/products.entity";
 
 @Injectable()
@@ -33,6 +33,18 @@ export class ProductsService {
 
     async findByDescription(productDescription: string): Promise<Products[]> {
         return this.productsRepository.find({ where: { description: ILike(`%${productDescription}%`) }, relations: { category: true } })
+    }
+
+    async findByPriceBetween(minPrice: number, maxPrice: number): Promise<Products[]> {
+        return this.productsRepository.find({ where: { price: Between(minPrice, maxPrice) }, relations: { category: true } })
+    }
+
+    async findByPriceLessThan(price: number): Promise<Products[]> {
+        return this.productsRepository.find({ where: { price: LessThanOrEqual(price) }, relations: { category: true } })
+    }
+
+    async findByPriceMoreThan(price:number):Promise<Products[]>{
+        return this.productsRepository.find({ where: { price: MoreThanOrEqual(price) }, relations: { category: true } })
     }
 
     async update(product: Products): Promise<Products> {

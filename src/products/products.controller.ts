@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { Products } from "../database/entities/products.entity";
 import { DeleteResult } from "typeorm";
@@ -35,6 +35,24 @@ export class ProductsController {
     @HttpCode(HttpStatus.OK)
     getProductByDescription(@Param('description') productDescription: string): Promise<Products[]> {
         return this.productService.findByDescription(productDescription);
+    }
+
+    @Get('/price/')
+    @HttpCode(HttpStatus.OK)
+    getProductByPriceBetween(@Query('min', ParseIntPipe) minPrice: number, @Query('max', ParseIntPipe) maxPrice: number): Promise<Products[]> {
+        return this.productService.findByPriceBetween(minPrice, maxPrice);
+    }
+
+    @Get('/price/more/:price')
+    @HttpCode(HttpStatus.OK)
+    getProductByPriceMoreThan(@Param('price', ParseIntPipe) price: number): Promise<Products[]> {
+        return this.productService.findByPriceMoreThan(price);
+    }
+
+    @Get('/price/less/:price')
+    @HttpCode(HttpStatus.OK)
+    getProductByPriceLessThan(@Param('price', ParseIntPipe) price: number): Promise<Products[]> {
+        return this.productService.findByPriceLessThan(price);
     }
 
     @Put()
